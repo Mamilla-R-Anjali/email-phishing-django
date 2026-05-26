@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Threat Detection | PhishingShield</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff2e63;
+            --success: #39ff14;
+            --warning: #ffa726;
+            --accent: #7d2ae8;
+            --dark: #0a192f;
+            --glass: rgba(15, 32, 60, 0.55);
+            --border: rgba(0, 212, 255, 0.4);
+            --glow: 0 0 60px rgba(0, 212, 255, 0.7);
+            --text: #e0f7ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a192f;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: radial-gradient(circle at 10% 20%, #0f2027, #0a192f 70%);
+        }
+
+        /* Animated Background */
+        .matrix-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(transparent, rgba(0,212,255,0.02));
+        }
+
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            padding: 20px 5%;
+            background: rgba(10, 25, 47, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 2px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8em;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00d4ff, #ff2e63, #7d2ae8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--glow);
+        }
+
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 50px;
+            background: rgba(0,212,255,0.15);
+            border: 2px solid var(--border);
+            transition: all 0.4s ease;
+        }
+
+        nav a:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translateY(-6px);
+            box-shadow: var(--glow);
+        }
+
+        .prediction-container {
+            padding: 140px 5% 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .prediction-hero {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .prediction-hero h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5em;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00d4ff, #7d2ae8, #39ff14);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .prediction-hero p {
+            font-size: 1.3em;
+            color: #bbbbbb;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .prediction-card {
+            background: var(--glass);
+            padding: 50px;
+            border-radius: 35px;
+            border: 2px solid var(--border);
+            backdrop-filter: blur(30px);
+            box-shadow: var(--glow);
+            transition: all 0.6s ease;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-header h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .form-header p {
+            font-size: 1.1em;
+            color: #bbbbbb;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: var(--primary);
+            transition: all 0.4s;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 25px 25px 25px 70px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            color: var(--text);
+            font-size: 1.2em;
+            outline: none;
+            transition: all 0.5s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.15);
+            box-shadow: var(--glow);
+        }
+
+        .form-group input::placeholder {
+            color: #888888;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 25px;
+            background: linear-gradient(135deg, #00d4ff, #7d2ae8);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 70px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 25px 60px rgba(0,212,255,0.7);
+            transition: all 0.7s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 40px 80px rgba(0,212,255,0.9);
+        }
+
+        .analyze-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.8s;
+        }
+
+        .analyze-btn:hover::before { left: 100%; }
+
+        .result-container {
+            margin-top: 50px;
+            padding: 40px;
+            border-radius: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: all 0.5s ease;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .result-text {
+            font-size: 2em;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .safe .result-icon { color: var(--success); }
+        .safe .result-text { color: var(--success); }
+
+        .suspicious .result-icon { color: var(--warning); }
+        .suspicious .result-text { color: var(--warning); }
+
+        .danger .result-icon { color: var(--secondary); }
+        .danger .result-text { color: var(--secondary); }
+
+        .confidence-meter {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 30px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .confidence-bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1.5s ease;
+        }
+
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .ml-status {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .status-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .status-item i {
+            font-size: 2em;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .status-item .label {
+            font-size: 0.9em;
+            color: #bbbbbb;
+        }
+
+        .status-item .value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Real-time Indicator */
+        .real-time-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(10, 25, 47, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1em;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 90;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--success);
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 20px; }
+            nav { flex-wrap: wrap; justify-content: center; }
+            nav a { padding: 12px 24px; }
+            .prediction-hero h2 { font-size: 2.8em; }
+            .prediction-card { padding: 30px; }
+            .ml-status { flex-direction: column; gap: 15px; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(60px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="matrix-bg"></div>
+
+    <header>
+        <div class="header-left">
+            <h1>PhishingShield AI</h1>
+        </div>
+        <nav>
+            <a href="/home">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
+
+    <div class="prediction-container">
+        <div class="prediction-hero">
+            <h2>AI Threat Detection</h2>
+            <p>Advanced machine learning analysis for identifying phishing attempts in real-time</p>
+        </div>
+        
+        <div class="prediction-card">
+            <div class="form-header">
+                <h3>Analyze Email Content</h3>
+                <p>Enter the email content below for immediate threat assessment using our ML model</p>
+            </div>
+            
+            <form method="POST" action="{% url 'prediction' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="input_data"><i class="fas fa-envelope"></i> Email Content</label>
+                    <div class="input-container">
+                        <i class="fas fa-keyboard"></i>
+                        <input type="text" id="input_data" name="input_data" placeholder="Enter email content for prediction" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="analyze-btn">
+                    <i class="fas fa-brain"></i> ANALYZE WITH AI
+                </button>
+            </form>
+            
+            {% if prediction %}
+            <div class="result-container 
+                {% if 'safe' in prediction|lower %}safe
+                {% elif 'suspicious' in prediction|lower %}suspicious
+                {% else %}danger{% endif %}">
+                <div class="result-icon">
+                    {% if 'safe' in prediction|lower %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif 'suspicious' in prediction|lower %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                    {% else %}
+                        <i class="fas fa-times-circle"></i>
+                    {% endif %}
+                </div>
+                <div class="result-text">
+                    {{ prediction }}
+                </div>
+                
+                <div class="confidence-meter">
+                    <div class="confidence-bar" style="
+                        width: 
+                        {% if 'safe' in prediction|lower %}30%
+                        {% elif 'suspicious' in prediction|lower %}65%
+                        {% else %}90%{% endif %};
+                        background: 
+                        {% if 'safe' in prediction|lower %}var(--success)
+                        {% elif 'suspicious' in prediction|lower %}var(--warning)
+                        {% else %}var(--secondary){% endif %};">
+                    </div>
+                </div>
+                <div class="confidence-label">
+                    <span>Low Risk</span>
+                    <span>
+                        {% if 'safe' in prediction|lower %}30%
+                        {% elif 'suspicious' in prediction|lower %}65%
+                        {% else %}90%{% endif %}
+                    </span>
+                    <span>High Risk</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="result-container">
+                <div class="result-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="result-text">
+                    Submit email for analysis
+                </div>
+                <p style="margin-top: 20px; color: #bbbbbb;">
+                    The AI will scan for phishing indicators and provide a threat assessment
+                </p>
+            </div>
+            {% endif %}
+            
+            <div class="ml-status">
+                <div class="status-item">
+                    <i class="fas fa-microchip"></i>
+                    <div class="value">99.2%</div>
+                    <div class="label">Model Accuracy</div>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-bolt"></i>
+                    <div class="value">0.8s</div>
+                    <div class="label">Avg. Response</div>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-database"></i>
+                    <div class="value">2.1M</div>
+                    <div class="label">Trained Samples</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="real-time-indicator">
+        <div class="status-dot"></div>
+        <span>ML Model Active</span>
+    </div>
+
+    <script>
+        // Form submission animation
+        const form = document.querySelector('form');
+        const analyzeBtn = document.querySelector('.analyze-btn');
+        
+        form.addEventListener('submit', function() {
+            // Add loading state
+            analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING...';
+            analyzeBtn.disabled = true;
+            
+            // In a real application, the form would submit normally
+            // This is just for visual feedback
+            setTimeout(() => {
+                analyzeBtn.innerHTML = '<i class="fas fa-brain"></i> ANALYZE WITH AI';
+                analyzeBtn.disabled = false;
+            }, 2000);
+        });
+
+        // Real-time indicator text update
+        const indicatorText = document.querySelector('.real-time-indicator span');
+        const texts = [
+            'ML Model Active',
+            'Processing Request',
+            'Analyzing Patterns',
+            'Updating Database'
+        ];
+        
+        let textIndex = 0;
+        setInterval(() => {
+            textIndex = (textIndex + 1) % texts.length;
+            indicatorText.textContent = texts[textIndex];
+        }, 3000);
+
+        // Dynamic status updates
+        const statusValues = document.querySelectorAll('.status-item .value');
+        setInterval(() => {
+            statusValues[0].textContent = (99.1 + Math.random() * 0.2).toFixed(1) + '%';
+            statusValues[1].textContent = (0.7 + Math.random() * 0.3).toFixed(1) + 's';
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | PhishingShield AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff2e63;
+            --success: #39ff14;
+            --warning: #ffa726;
+            --accent: #7d2ae8;
+            --dark: #0a192f;
+            --glass: rgba(15, 32, 60, 0.55);
+            --border: rgba(0, 212, 255, 0.4);
+            --glow: 0 0 60px rgba(0, 212, 255, 0.7);
+            --text: #e0f7ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a192f;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: radial-gradient(circle at 10% 20%, #0f2027, #0a192f 70%);
+        }
+
+        /* Animated Matrix Background */
+        .matrix-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(transparent, rgba(0,212,255,0.02));
+        }
+
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            padding: 20px 5%;
+            background: rgba(10, 25, 47, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 2px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8em;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00d4ff, #ff2e63, #7d2ae8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--glow);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 50px;
+            background: rgba(0,212,255,0.15);
+            border: 2px solid var(--border);
+            transition: all 0.4s ease;
+        }
+
+        nav a:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translateY(-6px);
+            box-shadow: var(--glow);
+        }
+
+        .dashboard {
+            padding: 120px 5% 80px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Welcome Hero */
+        .welcome-hero {
+            text-align: center;
+            margin-bottom: 80px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .welcome-hero h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5em;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00d4ff, #7d2ae8, #39ff14);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .welcome-hero p {
+            font-size: 1.5em;
+            color: #bbbbbb;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            padding: 40px 30px;
+            border-radius: 30px;
+            border: 2px solid var(--border);
+            backdrop-filter: blur(25px);
+            text-align: center;
+            transition: all 0.6s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,212,255,0.2), transparent);
+            transition: 1s;
+        }
+
+        .stat-card:hover::before { left: 100%; }
+
+        .stat-card:hover {
+            transform: translateY(-20px) scale(1.05);
+            box-shadow: var(--glow);
+        }
+
+        .stat-card i {
+            font-size: 4em;
+            background: linear-gradient(45deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .stat-card .number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5em;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: var(--glow);
+        }
+
+        .stat-card .label {
+            font-size: 1.3em;
+            color: #cccccc;
+            margin-top: 10px;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 35px;
+            border: 2px solid var(--border);
+            backdrop-filter: blur(30px);
+            margin-bottom: 40px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .chart-header h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2em;
+            color: var(--primary);
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 10px;
+        }
+
+        .time-filter button {
+            padding: 10px 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .time-filter button.active {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .chart {
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--accent));
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .bar:hover {
+            transform: scaleY(1.05);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9em;
+            color: #cccccc;
+        }
+
+        /* Threat Distribution */
+        .threat-distribution {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 35px;
+            border: 2px solid var(--border);
+            backdrop-filter: blur(30px);
+        }
+
+        .threat-distribution h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2em;
+            color: var(--primary);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .threat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .threat-item.suspicious {
+            border-left-color: var(--warning);
+        }
+
+        .threat-item.danger {
+            border-left-color: var(--secondary);
+        }
+
+        .threat-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .threat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .threat-count {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Quick Action */
+        .quick-action {
+            text-align: center;
+            margin: 100px 0;
+        }
+
+        .predict-btn {
+            display: inline-block;
+            padding: 28px 80px;
+            background: linear-gradient(135deg, #00d4ff, #7d2ae8);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-decoration: none;
+            border-radius: 80px;
+            box-shadow: 0 30px 80px rgba(0,212,255,0.7);
+            transition: all 0.7s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-15px) scale(1.1);
+            box-shadow: 0 50px 100px rgba(0,212,255,0.9);
+        }
+
+        .predict-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.8s;
+        }
+
+        .predict-btn:hover::before { left: 100%; }
+
+        /* Recent Activity */
+        .activity {
+            margin-top: 100px;
+            background: var(--glass);
+            padding: 50px;
+            border-radius: 35px;
+            border: 2px solid var(--border);
+            backdrop-filter: blur(30px);
+        }
+
+        .activity h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary);
+        }
+
+        .activity-item {
+            padding: 20px 0;
+            border-bottom: 1px dashed rgba(0,212,255,0.3);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 1.2em;
+        }
+
+        .activity-item i {
+            font-size: 1.8em;
+            color: var(--success);
+        }
+
+        .activity-item.safe i { color: var(--success); }
+        .activity-item.suspicious i { color: var(--warning); }
+        .activity-item.danger i { color: var(--secondary); }
+
+        /* Real-time Indicator */
+        .real-time-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(10, 25, 47, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1em;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 90;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--success);
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .welcome-hero h2 { font-size: 3.5em; }
+            .predict-btn { padding: 24px 60px; font-size: 1.8em; }
+            header { flex-direction: column; gap: 20px; }
+            .header-left, .header-right { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.2em; }
+            nav { flex-wrap: wrap; justify-content: center; }
+            nav a { padding: 12px 24px; }
+            .welcome-hero h2 { font-size: 3em; }
+            .stat-card .number { font-size: 2.8em; }
+            .chart { height: 200px; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(60px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="matrix-bg"></div>
+
+    <header>
+        <div class="header-left">
+            <h1>PhishingShield AI</h1>
+        </div>
+        <div class="header-right">
+            <nav>
+                <a href="{% url 'dashboard' %}">Home</a>
+                <a href="{% url 'prediction' %}">Prediction</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </nav>
+            <div class="user-info">
+                <div class="user-avatar"></div>
+                <div>
+                    <div style="font-weight: 600;">User</div>
+                    <div style="font-size: 0.8em; color: #cccccc;"></div>
+                </div>
+            </div>
+            <!-- <a href="{% url 'logout' %}" style="padding: 10px 20px; background: rgba(255, 46, 99, 0.2);">Logout</a> -->
+        </div>
+    </header>
+
+    <div class="dashboard">
+
+        <div class="welcome-hero">
+            <h2>Welcome Back, Defender</h2>
+            <p>Your AI shield is active • Real-time protection against all phishing threats</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-shield-alt"></i>
+                <div class="number" id="emails-scanned">1,247</div>
+                <div class="label">Emails Scanned</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-skull-crossbones"></i>
+                <div class="number" id="threats-blocked">89</div>
+                <div class="label">Threats Blocked</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-bolt"></i>
+                <div class="number" id="accuracy-rate">99.9%</div>
+                <div class="label">Accuracy Rate</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-trophy"></i>
+                <div class="number" id="days-streak">47</div>
+                <div class="label">Days Streak</div>
+            </div>
+        </div>
+
+        <div class="dashboard-layout">
+            <div>
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Threat Detection Analytics</h3>
+                        <div class="time-filter">
+                            <button class="active">24H</button>
+                            <button>7D</button>
+                            <button>30D</button>
+                        </div>
+                    </div>
+                    <div class="chart" id="threatChart">
+                        <!-- Chart bars will be generated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="quick-action">
+                    <a href="/prediction" class="predict-btn">
+                        Launch New Scan
+                    </a>
+                </div>
+            </div>
+            
+            <div class="threat-distribution">
+                <h3>Threat Distribution</h3>
+                <div class="threat-item">
+                    <div class="threat-info">
+                        <div class="threat-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div>Phishing Emails</div>
+                            <div style="font-size: 0.9em; color: #cccccc;">Spoofed sender addresses</div>
+                        </div>
+                    </div>
+                    <div class="threat-count">42</div>
+                </div>
+                <div class="threat-item suspicious">
+                    <div class="threat-info">
+                        <div class="threat-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <div>
+                            <div>Malicious Links</div>
+                            <div style="font-size: 0.9em; color: #cccccc;">Hidden redirects</div>
+                        </div>
+                    </div>
+                    <div class="threat-count">28</div>
+                </div>
+                <div class="threat-item danger">
+                    <div class="threat-info">
+                        <div class="threat-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div>
+                            <div>Fake Invoices</div>
+                            <div style="font-size: 0.9em; color: #cccccc;">Payment requests</div>
+                        </div>
+                    </div>
+                    <div class="threat-count">19</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="activity">
+            <h3>Recent Activity</h3>
+            <div class="activity-item safe">
+                <i class="fas fa-check-circle"></i>
+                <span>support@amazon.com → Verified as Safe (2 min ago)</span>
+            </div>
+            <div class="activity-item suspicious">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>paypal-security@alerts.com → Suspicious Link Detected</span>
+            </div>
+            <div class="activity-item danger">
+                <i class="fas fa-times-circle"></i>
+                <span>bankofamerica@verify.com → Critical Phishing Attempt Blocked</span>
+            </div>
+            <div class="activity-item safe">
+                <i class="fas fa-check-circle"></i>
+                <span>team@netflix.com → Legitimate Account Update</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="real-time-indicator">
+        <div class="status-dot"></div>
+        <span>AI Protection Active</span>
+    </div>
+
+    <script>
+        // Animated counters
+        document.querySelectorAll('.number').forEach(el => {
+            const originalText = el.textContent;
+            const isPercentage = originalText.includes('%');
+            const target = parseInt(originalText.replace(/[^0-9]/g, ''));
+            let count = 0;
+            const increment = target / 60;
+            const timer = setInterval(() => {
+                count += increment;
+                if (count >= target) {
+                    el.textContent = originalText;
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Math.floor(count).toLocaleString() + (isPercentage ? '%' : '');
+                }
+            }, 30);
+        });
+
+        // Generate chart data
+        const chartContainer = document.getElementById('threatChart');
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        
+        days.forEach(day => {
+            const barValue = Math.floor(Math.random() * 100) + 20;
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            bar.style.height = `${barValue}%`;
+            bar.innerHTML = `<div class="bar-label">${day}</div>`;
+            chartContainer.appendChild(bar);
+            
+            // Add tooltip
+            bar.setAttribute('title', `${barValue} threats detected`);
+        });
+
+        // Time filter functionality
+        const timeButtons = document.querySelectorAll('.time-filter button');
+        timeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                timeButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // In a real app, this would fetch new data for the selected time range
+                // For demo, we'll just regenerate random data
+                const bars = document.querySelectorAll('.bar');
+                bars.forEach(bar => {
+                    const newValue = Math.floor(Math.random() * 100) + 20;
+                    bar.style.height = `${newValue}%`;
+                    bar.setAttribute('title', `${newValue} threats detected`);
+                });
+            });
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update emails scanned
+            const emailsElement = document.getElementById('emails-scanned');
+            const currentEmails = parseInt(emailsElement.textContent.replace(/,/g, ''));
+            emailsElement.textContent = (currentEmails + Math.floor(Math.random() * 3)).toLocaleString();
+            
+            // Occasionally update threats blocked
+            if (Math.random() > 0.7) {
+                const threatsElement = document.getElementById('threats-blocked');
+                const currentThreats = parseInt(threatsElement.textContent.replace(/,/g, ''));
+                threatsElement.textContent = (currentThreats + 1).toLocaleString();
+            }
+            
+            // Update one random chart bar
+            const bars = document.querySelectorAll('.bar');
+            const randomBar = bars[Math.floor(Math.random() * bars.length)];
+            const currentHeight = parseInt(randomBar.style.height);
+            const newHeight = Math.max(20, Math.min(100, currentHeight + (Math.random() > 0.5 ? 5 : -5)));
+            randomBar.style.height = `${newHeight}%`;
+            randomBar.setAttribute('title', `${newHeight} threats detected`);
+        }, 3000);
+    </script>
+</body>
+</html>

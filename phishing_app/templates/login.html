@@ -1,0 +1,596 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | PhishingShield AI</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Optional global CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff2e63;
+            --success: #39ff14;
+            --accent: #7d2ae8;
+            --dark: #0a192f;
+            --glass: rgba(10, 30, 60, 0.45);
+            --border: rgba(0, 212, 255, 0.35);
+            --glow: 0 0 50px rgba(0, 212, 255, 0.7);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a192f;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: radial-gradient(circle at 20% 80%, #0f2027, #0a192f);
+        }
+
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 200vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            padding: 20px 5%;
+            background: rgba(10, 25, 47, 0.97);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.6em;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00d4ff, #ff2e63, #7d2ae8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--glow);
+        }
+
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 50px;
+            background: rgba(0,212,255,0.15);
+            border: 2px solid var(--border);
+            transition: all 0.4s ease;
+        }
+
+        nav a:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translateY(-5px);
+            box-shadow: var(--glow);
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 560px;
+            padding: 70px;
+            background: var(--glass);
+            border-radius: 38px;
+            border: 2px solid var(--border);
+            backdrop-filter: blur(35px);
+            box-shadow: 0 50px 120px rgba(0,0,0,0.8), var(--glow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: floatIn 1.8s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        .login-card:hover {
+            transform: translateY(-15px) rotateX(5deg);
+        }
+
+        @keyframes floatIn {
+            from { opacity: 0; transform: translateY(100px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .logo-icon i {
+            font-size: 8em;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 60px var(--primary));
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 60px var(--primary)); }
+            50% { filter: drop-shadow(0 0 90px var(--primary)); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5em;
+            margin: 20px 0 15px;
+            background: linear-gradient(90deg, #00d4ff, #fff, #7d2ae8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #cccccc;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 26px 26px 26px 75px;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            color: #fff;
+            font-size: 1.3em;
+            outline: none;
+            transition: all 0.5s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+            background: rgba(0,212,255,0.15);
+            transform: scale(1.02);
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.8em;
+            color: var(--primary);
+            transition: all 0.4s;
+        }
+
+        .form-group input:focus + i {
+            color: #fff;
+            transform: translateY(-50%) scale(1.4);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: #fff;
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .security-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 1em;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .security-item i {
+            color: var(--success);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+        }
+
+        .remember-me input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 28px;
+            background: linear-gradient(135deg, #00d4ff, #7d2ae8);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: 3px;
+            border: none;
+            border-radius: 70px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 25px 60px rgba(0,212,255,0.7);
+            transition: all 0.6s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 40px 80px rgba(0,212,255,0.9);
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.8s;
+        }
+
+        button[type="submit"]:hover::before { left: 100%; }
+
+        .extra-links {
+            margin-top: 40px;
+            font-size: 1.2em;
+        }
+
+        .extra-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: 600;
+        }
+
+        .extra-links a:hover { text-decoration: underline; }
+
+        .error-message {
+            color: var(--secondary);
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 46, 99, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 46, 99, 0.3);
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(255, 46, 99, 0.5);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .success-message {
+            color: var(--success);
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(57, 255, 20, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 120px 5%;
+            text-align: center;
+            background: rgba(10,25,47,0.6);
+        }
+
+        .features h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            margin-bottom: 80px;
+            background: linear-gradient(90deg, #00d4ff, #7d2ae8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            padding: 50px 30px;
+            border-radius: 30px;
+            border: 2px solid var(--border);
+            backdrop-filter: blur(20px);
+            transition: all 0.5s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-20px);
+            box-shadow: var(--glow);
+        }
+
+        .feature-card i {
+            font-size: 4em;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h4 {
+            font-size: 1.8em;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .login-card { padding: 60px 50px; max-width: 90%; }
+            h2 { font-size: 2.8em; }
+            button[type="submit"] { font-size: 1.5em; padding: 24px; }
+            .features h3 { font-size: 2.4em; }
+            header { flex-direction: column; gap: 15px; }
+            nav { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 480px) {
+            .login-card { padding: 50px 35px; }
+            h2 { font-size: 2.4em; }
+            .form-group input { padding: 22px 22px 22px 65px; font-size: 1.1em; }
+            .remember-forgot { flex-direction: column; gap: 15px; }
+            .security-indicators { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="particles" id="particles"></div>
+
+    <header>
+        <h1>PhishingShield AI</h1>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'register' %}">Register</a>
+        </nav>
+    </header>
+
+    <!-- HERO LOGIN -->
+    <section class="hero">
+        <div class="login-card">
+            <div class="logo-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h2>Secure Access</h2>
+            <p class="subtitle">Log in to your AI-powered phishing defense system</p>
+
+            <form method="POST" id="loginForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <input type="email" name="email" id="email" placeholder="Email" required>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <i class="fas fa-lock"></i>
+                    <span class="password-toggle" id="passwordToggle">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                
+                <div class="security-indicators">
+                    <div class="security-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>SSL Secured</span>
+                    </div>
+                    <div class="security-item">
+                        <i class="fas fa-clock"></i>
+                        <span id="sessionTimer">Session: 30m</span>
+                    </div>
+                </div>
+                
+                <!-- <div class="remember-forgot">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div> -->
+
+                {% if error %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i> {{ error }}
+                    </div>
+                {% endif %}
+
+                {% if success %}
+                    <div class="success-message">
+                        <i class="fas fa-check-circle"></i> {{ success }}
+                    </div>
+                {% endif %}
+
+                <button type="submit">Login</button>
+            </form>
+
+            <div class="extra-links">
+                <a href="{% url 'register' %}">Create Account</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <!-- <h3>Why Professionals Trust Us</h3> -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <i class="fas fa-brain"></i>
+                <h4>AI-Powered Detection</h4>
+                <p>Real-time analysis of every email with 99.9% accuracy</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bolt"></i>
+                <h4>Instant Alerts</h4>
+                <p>Get notified the moment a threat is detected</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-shield-virus"></i>
+                <h4>Zero Trust Architecture</h4>
+                <p>Enterprise-grade security for every user</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-line"></i>
+                <h4>Real-time Dashboard</h4>
+                <p>Live threat intelligence and attack patterns</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Generate 80 floating particles
+        const particlesContainer = document.getElementById('particles');
+        for(let i = 0; i < 80; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDelay = Math.random() * 20 + 's';
+            p.style.animationDuration = 15 + Math.random() * 25 + 's';
+            p.style.opacity = Math.random() * 0.7 + 0.2;
+            particlesContainer.appendChild(p);
+        }
+
+        // Password visibility toggle
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordInput = document.getElementById('password');
+        
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle eye icon
+            const icon = this.querySelector('i');
+            icon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+        });
+
+        // Session timer simulation
+        let sessionMinutes = 30;
+        const sessionTimer = document.getElementById('sessionTimer');
+        
+        setInterval(() => {
+            if (sessionMinutes > 0) {
+                sessionMinutes--;
+                sessionTimer.textContent = `Session: ${sessionMinutes}m`;
+                
+                // Change color when session is about to expire
+                if (sessionMinutes < 5) {
+                    sessionTimer.style.color = 'var(--secondary)';
+                }
+            }
+        }, 60000); // Update every minute
+
+        // Form submission animation
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+            submitButton.disabled = true;
+            
+            // In a real application, we wouldn't prevent form submission
+            // This is just for the demo effect
+            setTimeout(() => {
+                submitButton.innerHTML = 'Login';
+                submitButton.disabled = false;
+            }, 2000);
+        });
+
+        // Real-time security status indicator
+        const securityItems = document.querySelectorAll('.security-item');
+        
+        // Simulate real-time security status updates
+        setInterval(() => {
+            securityItems.forEach(item => {
+                item.style.background = 'rgba(0, 212, 255, ' + (0.1 + Math.random() * 0.1) + ')';
+            });
+        }, 3000);
+    </script>
+</body>
+</html>
