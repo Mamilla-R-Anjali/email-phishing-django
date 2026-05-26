@@ -2,15 +2,9 @@ asgiref==3.11.1
 Django==5.2.14
 gunicorn==26.0.0
 joblib==1.5.3
-mysql-connector-python==9.7.0
-mysqlclient==2.2.8
 numpy==2.2.6
-packaging==26.0
 scikit-learn==1.7.2
-scipy==1.15.3
 sqlparse==0.5.5
 threadpoolctl==3.6.0
 typing_extensions==4.15.0
-tzdata==2026.2
 whitenoise==6.12.0
-xgboost==3.2.0
