@@ -26,8 +26,17 @@ SECRET_KEY = 'django-insecure-#78#&q$j1u)gmbg+bl=4)_u2@-)vsngfj3gj2+sy876#ctsl^q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "email-phishing-django-production.up.railway.app",
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://email-phishing-django-production.up.railway.app",
+]
+
+CSRF_COOKIE_SECURE = True
 
 # Application definition
 
