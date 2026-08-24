@@ -29,11 +29,11 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "email-phishing-django-production.up.railway.app",
+    "email-phishing-django-1.onrender.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://email-phishing-django-production.up.railway.app",
+    "https://email-phishing-django-1.onrender.com",
 ]
 
 CSRF_COOKIE_SECURE = True
