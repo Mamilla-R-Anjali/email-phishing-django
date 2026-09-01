@@ -1,0 +1,1 @@
+web: gunicorn email_phishing_django.wsgi

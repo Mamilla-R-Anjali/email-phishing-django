@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Logout | PhishingShield AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff2e63;
+            --success: #39ff14;
+            --warning: #ffa726;
+            --accent: #7d2ae8;
+            --dark: #0a192f;
+            --glass: rgba(15, 32, 60, 0.55);
+            --border: rgba(0, 212, 255, 0.4);
+            --glow: 0 0 60px rgba(0, 212, 255, 0.7);
+            --text: #e0f7ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a192f;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: radial-gradient(circle at 10% 20%, #0f2027, #0a192f 70%);
+        }
+
+        /* Animated Background */
+        .matrix-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(transparent, rgba(0,212,255,0.02));
+        }
+
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            padding: 20px 5%;
+            background: rgba(10, 25, 47, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 2px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8em;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00d4ff, #ff2e63, #7d2ae8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--glow);
+        }
+
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 50px;
+            background: rgba(0,212,255,0.15);
+            border: 2px solid var(--border);
+            transition: all 0.4s ease;
+        }
+
+        nav a:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translateY(-6px);
+            box-shadow: var(--glow);
+        }
+
+        .logout-container {
+            padding: 140px 5% 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+
+        .logout-card {
+            background: var(--glass);
+            padding: 60px;
+            border-radius: 35px;
+            border: 2px solid var(--border);
+            backdrop-filter: blur(30px);
+            box-shadow: var(--glow);
+            transition: all 0.6s ease;
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .logout-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .logout-icon {
+            font-size: 8em;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 40px var(--primary)); }
+            50% { filter: drop-shadow(0 0 70px var(--primary)); }
+        }
+
+        .logout-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5em;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00d4ff, #7d2ae8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .logout-card p {
+            font-size: 1.3em;
+            color: #bbbbbb;
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+        .countdown {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            color: var(--primary);
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .countdown-number {
+            font-size: 2em;
+            font-weight: 900;
+            color: var(--success);
+            text-shadow: 0 0 20px var(--success);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.5s ease;
+            font-size: 1.2em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #7d2ae8);
+            color: white;
+            box-shadow: 0 15px 40px rgba(0,212,255,0.5);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 25px 60px rgba(0,212,255,0.7);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .security-status {
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .security-status h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px dashed rgba(0,212,255,0.3);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        .status-icon.secure {
+            background: rgba(57, 255, 20, 0.2);
+            color: var(--success);
+        }
+
+        .status-icon.pending {
+            background: rgba(255, 167, 38, 0.2);
+            color: var(--warning);
+        }
+
+        .status-icon.complete {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--primary);
+        }
+
+        .status-value {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Real-time Indicator */
+        .real-time-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(10, 25, 47, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1em;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 90;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--success);
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 20px; }
+            nav { flex-wrap: wrap; justify-content: center; }
+            nav a { padding: 12px 24px; }
+            .logout-card { padding: 40px 30px; }
+            .logout-card h2 { font-size: 2.8em; }
+            .action-buttons { flex-direction: column; }
+            .btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="matrix-bg"></div>
+
+    <header>
+        <div class="header-left">
+            <h1>PhishingShield AI</h1>
+        </div>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'login' %}">Login</a>
+        </nav>
+    </header>
+
+    <div class="logout-container">
+        <div class="logout-card">
+            <div class="logout-icon">
+                <i class="fas fa-shield-check"></i>
+            </div>
+            
+            <h2>Secure Logout Complete</h2>
+            <p>You have been successfully logged out of your PhishingShield AI account. All sessions have been terminated and your data remains protected.</p>
+            
+            <div class="countdown">
+                Redirecting to home page in <span class="countdown-number" id="countdown">5</span> seconds
+            </div>
+            
+            <div class="security-status">
+                <h3>Security Status</h3>
+                <div class="status-item">
+                    <div class="status-info">
+                        <div class="status-icon secure">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <div>Session Terminated</div>
+                            <div style="font-size: 0.9em; color: #bbbbbb;">All active sessions closed</div>
+                        </div>
+                    </div>
+                    <div class="status-value">Completed</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-info">
+                        <div class="status-icon complete">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div>
+                            <div>Data Encrypted</div>
+                            <div style="font-size: 0.9em; color: #bbbbbb;">Sensitive information secured</div>
+                        </div>
+                    </div>
+                    <div class="status-value">Active</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-info">
+                        <div class="status-icon pending">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div>
+                            <div>Cache Clearing</div>
+                            <div style="font-size: 0.9em; color: #bbbbbb;">Removing temporary data</div>
+                        </div>
+                    </div>
+                    <div class="status-value" id="cacheStatus">In Progress</div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="{% url 'home' %}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Return to Home
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-secondary">
+                    <i class="fas fa-sign-in-alt"></i> Login Again
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="real-time-indicator">
+        <div class="status-dot"></div>
+        <span>Security Active</span>
+    </div>
+
+    <script>
+        // Countdown timer for redirect
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = "{% url 'home' %}";
+            }
+        }, 1000);
+
+        // Simulate security processes
+        const cacheStatus = document.getElementById('cacheStatus');
+        setTimeout(() => {
+            cacheStatus.textContent = 'Completed';
+            cacheStatus.style.color = 'var(--success)';
+            
+            const statusIcon = document.querySelector('.status-icon.pending');
+            statusIcon.innerHTML = '<i class="fas fa-check"></i>';
+            statusIcon.className = 'status-icon secure';
+        }, 3000);
+
+        // Real-time indicator text update
+        const indicatorText = document.querySelector('.real-time-indicator span');
+        const texts = [
+            'Security Active',
+            'Session Secured',
+            'Data Protected',
+            'Logout Complete'
+        ];
+        
+        let textIndex = 0;
+        setInterval(() => {
+            textIndex = (textIndex + 1) % texts.length;
+            indicatorText.textContent = texts[textIndex];
+        }, 3000);
+
+        // Add some dynamic visual effects
+        const statusItems = document.querySelectorAll('.status-item');
+        statusItems.forEach((item, index) => {
+            setTimeout(() => {
+                item.style.transform = 'translateX(0)';
+                item.style.opacity = '1';
+            }, index * 500);
+            
+            // Initial state for animation
+            item.style.transform = 'translateX(-20px)';
+            item.style.opacity = '0';
+            item.style.transition = 'all 0.5s ease';
+        });
+    </script>
+</body>
+</html>

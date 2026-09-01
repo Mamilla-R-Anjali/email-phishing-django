@@ -1,0 +1,11 @@
+asgiref==3.11.1
+Django==5.2.14
+gunicorn==26.0.0
+joblib==1.5.3
+numpy==2.2.6
+scikit-learn==1.7.2
+sqlparse==0.5.5
+threadpoolctl==3.6.0
+typing_extensions==4.15.0
+whitenoise==6.12.0
+xgboost==2.0.3
